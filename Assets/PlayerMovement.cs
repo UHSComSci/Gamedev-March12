@@ -27,8 +27,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        if(OnFloor())
+        if (OnFloor())
+        {
+            Debug.Log("Jump");
             rb.velocity = new Vector2(rb.velocity.x, jump);
+        }
     }
 
     bool OnFloor()
@@ -56,9 +59,9 @@ public class PlayerMovement : MonoBehaviour
 
         //float jump = Input.GetAxisRaw("Jump");
         
-        bool jump = Input.GetButtonDown("Jump");
+        float jump = Input.GetAxisRaw("Jump");
 
-        if (jump)
+        if (jump > 0)
         {
             Jump();
         }
