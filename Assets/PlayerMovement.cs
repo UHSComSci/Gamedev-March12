@@ -16,8 +16,11 @@ public class PlayerMovement : MonoBehaviour
 
     public LayerMask groundLayers;
 
+    public Animator animator;
+
     bool lookingRight = true;
     bool crouching = false;
+    bool grounded = true;
 
     // Start is called before the first frame update
     void Start()
@@ -34,11 +37,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        if (OnFloor())
-        {
-            Debug.Log("Jump");
             rb.velocity = new Vector2(rb.velocity.x, jump);
-        }
+            animator.SetBool("jumping", true);
     }
 
     bool OnFloor()
@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
             //If crouching
             disableOnCrouch.enabled = false;
             crouching = true;
+            animator.SetBool("crouching", true);
         }
         else if(crouch >= 0 && crouching)
         {
@@ -85,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 disableOnCrouch.enabled = true;
                 crouching = false;
+                animator.SetBool("crouching", false);
             }
         }
 
@@ -100,9 +102,16 @@ public class PlayerMovement : MonoBehaviour
             Flip();
 
         /* Jump */
+        if(!grounded && OnFloor())
+            animator.SetBool("jumping", false);
+        grounded = OnFloor();
         float jump = Input.GetAxisRaw("Jump");
-        if (jump > 0)
+        if (jump > 0 && grounded)
             Jump();
+
+        /* Animation */
+        float actualSpeed = Mathf.Abs(rb.velocity.x);
+        animator.SetFloat("speed", actualSpeed);
     }
 
     void Flip()
